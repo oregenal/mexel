@@ -17,16 +17,20 @@ int main(int argc, char **argv)
 	}
 
 	struct stat st;
-	int res = stat(FILE_PATH, &st);
-	if(res < 0) {
-		perror("Filed");
+	int file_size = stat(FILE_PATH, &st);
+	if(file_size < 0) {
+		perror("Failed");
 		exit(EXIT_FAILURE);
 	}
 
 	size_t size = st.st_size;
 	char *buffer = malloc(sizeof(char)*size);
 
-	fread(buffer, 1, size, file);
+	size_t readed = fread(buffer, 1, size, file);
+	if(readed != size) {
+		fprintf(stderr, "Fail to read file.\n");
+		exit(EXIT_FAILURE);
+	}
 
 	puts(buffer);
 
