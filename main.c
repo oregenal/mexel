@@ -42,7 +42,7 @@ int main(int argc, char **argv)
 
 	size_t readed = fread(buffer, 1, size, file);
 	if(readed != size) {
-		fprintf(stderr, "Fail to read file.\n");
+		fputs("Fail to read file.\n", stderr);
 		exit(EXIT_FAILURE);
 	}
 
