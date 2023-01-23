@@ -3,21 +3,27 @@
 #include <sys/stat.h>
 #include <errno.h>
 
-#define FILE_PATH "./input.csv"
+#define USAGE_HELP \
+	"Not enough arguments.\n" \
+	"Type ./mexel <file_name.csv>\n"
 
 int main(int argc, char **argv)
 {
-	(void)argc;
-	(void)argv;
+	if(argc != 2) {
+		fputs(USAGE_HELP, stderr);
+		exit(EXIT_FAILURE);
+	}
 
-	FILE *file = fopen(FILE_PATH, "r");
+	char *file_path = argv[1];
+
+	FILE *file = fopen(file_path, "r");
 	if(file == NULL) {
 		perror("Failed");
 		exit(EXIT_FAILURE);
 	}
 
 	struct stat st;
-	int error_indicator = stat(FILE_PATH, &st);
+	int error_indicator = stat(file_path, &st);
 	if(error_indicator < 0) {
 		perror("Failed");
 		exit(EXIT_FAILURE);
