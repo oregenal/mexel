@@ -1,7 +1,9 @@
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include <string.h>
 
 #define USAGE_HELP \
 	"Not enough arguments.\n" \
@@ -15,6 +17,12 @@ int main(int argc, char **argv)
 	}
 
 	char *file_path = argv[1];
+
+	char *extention_chek = strcasestr(file_path, ".csv");
+	if(extention_chek == NULL) {
+		fputs("File must be *.csv", stderr);
+		exit(EXIT_FAILURE);
+	}
 
 	FILE *file = fopen(file_path, "r");
 	if(file == NULL) {
