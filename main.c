@@ -17,8 +17,8 @@ int main(int argc, char **argv)
 	}
 
 	struct stat st;
-	int file_size = stat(FILE_PATH, &st);
-	if(file_size < 0) {
+	int error_indicator = stat(FILE_PATH, &st);
+	if(error_indicator < 0) {
 		perror("Failed");
 		exit(EXIT_FAILURE);
 	}
