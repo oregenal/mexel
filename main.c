@@ -16,7 +16,7 @@ int main(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 
-	char *file_path = argv[1];
+	const char *file_path = argv[1];
 
 	char *extention_chek = strcasestr(file_path, ".csv");
 	if(extention_chek == NULL) {
