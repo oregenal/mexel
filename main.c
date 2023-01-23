@@ -9,7 +9,7 @@
 	"Not enough arguments.\n" \
 	"Type ./mexel <file_name.csv>\n"
 
-int main(int argc, char **argv)
+char *read_file(int argc, char **argv)
 {
 	if(argc != 2) {
 		fputs(USAGE_HELP, stderr);
@@ -46,9 +46,17 @@ int main(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 
-	puts(buffer);
-
-	free(buffer);
 	fclose(file);
+
+	return buffer;
+}
+
+int main(int argc, char **argv)
+{
+	char *context = read_file(argc, argv);
+
+	puts(context);
+
+	free(context);
 	return 0;
 }
