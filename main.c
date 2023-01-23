@@ -34,6 +34,7 @@ int main(int argc, char **argv)
 
 	puts(buffer);
 
+	free(buffer);
 	fclose(file);
 	return 0;
 }
