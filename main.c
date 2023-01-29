@@ -68,6 +68,7 @@ typedef struct column_tag {
 column *parse_file(const char *context)
 {
 	while(*context) {
+		putchar((int)*context);
 		context++;
 	}
 
@@ -77,7 +78,6 @@ column *parse_file(const char *context)
 	free(first);
 	free(first_col);
 
-	puts(context);
 	return NULL;
 }
 
