@@ -67,7 +67,9 @@ typedef struct column_tag {
 
 column *parse_file(const char *context)
 {
-	(void)context;
+	while(*context) {
+		context++;
+	}
 
 	node *first = malloc(sizeof(node));
 	column *first_col = malloc(sizeof(column));
