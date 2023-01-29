@@ -51,11 +51,41 @@ char *read_file(int argc, char **argv)
 	return buffer;
 }
 
+typedef struct node_tag {
+	struct node_tag *next;
+	size_t index;
+	char *data;
+} node;
+
+typedef struct column_tag {
+	struct column_tag *next;
+	node *node;
+	size_t index;
+	size_t total;
+	size_t total_nodes;
+} column;
+
+column *parse_file(const char *context)
+{
+	(void)context;
+
+	node *first = malloc(sizeof(node));
+	column *first_col = malloc(sizeof(column));
+
+	free(first);
+	free(first_col);
+
+	puts(context);
+	return NULL;
+}
+
 int main(int argc, char **argv)
 {
 	char *context = read_file(argc, argv);
 
-	puts(context);
+	column *tab = parse_file(context);
+
+	free(tab);
 
 	free(context);
 	return 0;
