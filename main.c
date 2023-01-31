@@ -63,14 +63,20 @@ void parse_file(context_t *context)
 	fwrite(context->buffer, 1, context->len, stdout);
 }
 
+void delete_context(context_t* context)
+{
+	free(context->buffer);
+
+	free(context);
+}
+
 int main(int argc, char **argv)
 {
 	context_t *context = read_file(argc, argv);
 
 	parse_file(context);
 
-	free(context->buffer);
+	delete_context(context);
 
-	free(context);
 	return 0;
 }
