@@ -6,7 +6,7 @@
 #include <string.h>
 #include <stdbool.h>
 
-#define CELL_SIZE 10
+#define CELL_SIZE 11
 
 #define USAGE_HELP \
 	"Type ./mexel <file_name.csv>\n"
@@ -86,7 +86,7 @@ unsigned int find_cell(size_t row, size_t col, context_t *context)
 		--col;
 	}
 
-	printf("=");
+	//printf("=");
 
 	char cell[CELL_SIZE];
 	size_t i = 0;
@@ -102,28 +102,29 @@ unsigned int find_cell(size_t row, size_t col, context_t *context)
 	}
 	cell[i] = 0;
 
-	unsigned int result = cell_convert(cell);
+	unsigned int math = cell_convert(cell);
 
-	printf("%u", result);
+	fflush(stdout);
+	//printf("%u", math);
 
-	return result;
+	return math;
 }
 
 char *do_math(char *current, context_t *context)
 {
-	(void) context;
-
-	printf("f(");
+	//printf("f(");
+	unsigned int result = 0;
 	for(;;) {
 		size_t column = *(current++)-'A'+1;
 		size_t row = *(current++)-'1'+1;
-		printf("%zu:%zu", column, row);
-		find_cell(row, column, context);
+		//printf("%zu:%zu", column, row);
+		result += find_cell(row, column, context);
 		if(*current == ',' || *current == '\n')
 			break;
-		fwrite(current++, 1, 1, stdout);
+		//fwrite(current++, 1, 1, stdout);
+		++current;
 	}
-	printf(")");
+	printf("%u", result);
 
 	return current;
 }
