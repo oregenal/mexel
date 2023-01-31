@@ -9,7 +9,12 @@
 	"Not enough arguments.\n" \
 	"Type ./mexel <file_name.csv>\n"
 
-char *read_file(int argc, char **argv)
+typedef struct context {
+	char *buffer;
+	size_t len;
+} context_t;
+
+context_t *read_file(int argc, char **argv)
 {
 	if(argc != 2) {
 		fputs(USAGE_HELP, stderr);
@@ -37,57 +42,34 @@ char *read_file(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 
-	size_t size = st.st_size;
-	char *buffer = malloc(sizeof(char)*size);
+	context_t *result = malloc(sizeof(context_t));
 
-	size_t readed = fread(buffer, 1, size, file);
-	if(readed != size) {
+	result->len = st.st_size;
+	result->buffer = malloc(sizeof(char)*result->len);
+
+	size_t readed = fread(result->buffer, 1, result->len, file);
+	if(readed != result->len) {
 		fputs("Fail to read file.\n", stderr);
 		exit(EXIT_FAILURE);
 	}
 
 	fclose(file);
 
-	return buffer;
+	return result;
 }
 
-typedef struct node_tag {
-	struct node_tag *next;
-	size_t index;
-	char *data;
-} node;
-
-typedef struct column_tag {
-	struct column_tag *next;
-	node *node;
-	size_t index;
-	size_t total;
-	size_t total_nodes;
-} column;
-
-column *parse_file(const char *context)
+void parse_file(context_t *context)
 {
-	while(*context) {
-		putchar((int)*context);
-		context++;
-	}
-
-	node *first = malloc(sizeof(node));
-	column *first_col = malloc(sizeof(column));
-
-	free(first);
-	free(first_col);
-
-	return NULL;
+	fwrite(context->buffer, 1, context->len, stdout);
 }
 
 int main(int argc, char **argv)
 {
-	char *context = read_file(argc, argv);
+	context_t *context = read_file(argc, argv);
 
-	column *tab = parse_file(context);
+	parse_file(context);
 
-	free(tab);
+	free(context->buffer);
 
 	free(context);
 	return 0;
