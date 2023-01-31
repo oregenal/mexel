@@ -65,6 +65,19 @@ void delete_context(context_t *context)
 	free(context);
 }
 
+char *do_math(char *current, context_t *context)
+{
+	(void) context;
+
+	printf("f(");
+	while(*current != ',' && *current != '\n') {
+		fwrite(current++, 1, 1, stdout);
+	}
+	printf(")");
+
+	return current;
+}
+
 void parse_context(context_t *context)
 {
 	char *current = context->buffer;
@@ -74,10 +87,8 @@ void parse_context(context_t *context)
 	while(*current) {
 		if(new_cell) {
 			if(*current == '=') {
-				printf("f()");
-				++current;
+				current = do_math(++current, context);
 			}
-			new_cell = false;
 		}
 
 		if(*current == '\n') new_cell = true;
@@ -94,7 +105,7 @@ int main(int argc, char **argv)
 	context_t *context = read_context(argc, argv);
 
 	parse_context(context);
-	parse_context(context);
+	//parse_context(context);
 
 	delete_context(context);
 
