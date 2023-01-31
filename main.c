@@ -65,6 +65,23 @@ void delete_context(context_t *context)
 	free(context);
 }
 
+void find_cell(size_t row, size_t col, context_t *context)
+{
+	char *buffer = context->buffer;
+	while(row-1) {
+		while(*(buffer++) != '\n');
+		--row;
+	}
+
+	while(col-1) {
+		while(*(buffer++) != ',');
+		--col;
+	}
+
+	printf("=");
+	while(*buffer != ',' && *buffer != '\n') fwrite(buffer++, 1, 1, stdout);
+}
+
 char *do_math(char *current, context_t *context)
 {
 	(void) context;
@@ -74,6 +91,7 @@ char *do_math(char *current, context_t *context)
 		size_t column = *(current++)-'A'+1;
 		size_t row = *(current++)-'1'+1;
 		printf("%zu:%zu", column, row);
+		find_cell(row, column, context);
 		if(*current == ',' || *current == '\n')
 			break;
 		fwrite(current++, 1, 1, stdout);
