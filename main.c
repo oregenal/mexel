@@ -6,7 +6,6 @@
 #include <string.h>
 
 #define USAGE_HELP \
-	"Not enough arguments.\n" \
 	"Type ./mexel <file_name.csv>\n"
 
 typedef struct context {
@@ -14,7 +13,7 @@ typedef struct context {
 	size_t len;
 } context_t;
 
-context_t *read_file(int argc, char **argv)
+context_t *read_context(int argc, char **argv)
 {
 	if(argc != 2) {
 		fputs(USAGE_HELP, stderr);
@@ -58,23 +57,24 @@ context_t *read_file(int argc, char **argv)
 	return result;
 }
 
-void parse_file(context_t *context)
-{
-	fwrite(context->buffer, 1, context->len, stdout);
-}
-
-void delete_context(context_t* context)
+void delete_context(context_t *context)
 {
 	free(context->buffer);
 
 	free(context);
 }
 
+void parse_context(context_t *context)
+{
+	fwrite(context->buffer, 1, context->len, stdout);
+}
+
 int main(int argc, char **argv)
 {
-	context_t *context = read_file(argc, argv);
+	context_t *context = read_context(argc, argv);
 
-	parse_file(context);
+	parse_context(context);
+	parse_context(context);
 
 	delete_context(context);
 
