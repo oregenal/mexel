@@ -6,6 +6,8 @@
 #include <string.h>
 #include <stdbool.h>
 
+#define CELL_SIZE 10
+
 #define USAGE_HELP \
 	"Type ./mexel <file_name.csv>\n"
 
@@ -65,8 +67,14 @@ void delete_context(context_t *context)
 	free(context);
 }
 
-void find_cell(size_t row, size_t col, context_t *context)
+int cell_convert(const char *cell)
 {
+	return atoi(cell);
+}
+
+unsigned int find_cell(size_t row, size_t col, context_t *context)
+{
+	size_t loc_row = row, loc_col = col;
 	char *buffer = context->buffer;
 	while(row-1) {
 		while(*(buffer++) != '\n');
@@ -79,7 +87,26 @@ void find_cell(size_t row, size_t col, context_t *context)
 	}
 
 	printf("=");
-	while(*buffer != ',' && *buffer != '\n') fwrite(buffer++, 1, 1, stdout);
+
+	char cell[CELL_SIZE];
+	size_t i = 0;
+	//while(*buffer != ',' && *buffer != '\n') fwrite(buffer++, 1, 1, stdout);
+	while(*buffer != ',' && *buffer != '\n') {
+		if(*buffer < '0' || *buffer > '9') {
+			fprintf(stderr, 
+					"Error: cell %zu:%zu must be a number.\n", 
+					loc_col, loc_row);
+			exit(EXIT_FAILURE);
+		}
+		cell[i++] = *(buffer++);
+	}
+	cell[i] = 0;
+
+	unsigned int result = cell_convert(cell);
+
+	printf("%u", result);
+
+	return result;
 }
 
 char *do_math(char *current, context_t *context)
