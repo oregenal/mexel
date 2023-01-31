@@ -70,7 +70,12 @@ char *do_math(char *current, context_t *context)
 	(void) context;
 
 	printf("f(");
-	while(*current != ',' && *current != '\n') {
+	for(;;) {
+		size_t column = *(current++)-'A'+1;
+		size_t row = *(current++)-'1'+1;
+		printf("%zu:%zu", column, row);
+		if(*current == ',' || *current == '\n')
+			break;
 		fwrite(current++, 1, 1, stdout);
 	}
 	printf(")");
