@@ -4,6 +4,7 @@
 #include <sys/stat.h>
 #include <errno.h>
 #include <string.h>
+#include <stdbool.h>
 
 #define USAGE_HELP \
 	"Type ./mexel <file_name.csv>\n"
@@ -66,7 +67,26 @@ void delete_context(context_t *context)
 
 void parse_context(context_t *context)
 {
-	fwrite(context->buffer, 1, context->len, stdout);
+	char *current = context->buffer;
+
+	bool new_cell = true;
+	
+	while(*current) {
+		if(new_cell) {
+			if(*current == '=') {
+				printf("f()");
+				++current;
+			}
+			new_cell = false;
+		}
+
+		if(*current == '\n') new_cell = true;
+		if(*current == ',') new_cell = true;
+
+		fwrite(current++, 1, 1, stdout);
+	}
+
+	//fwrite(context->buffer, 1, context->len, stdout);
 }
 
 int main(int argc, char **argv)
