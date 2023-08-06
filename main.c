@@ -11,12 +11,12 @@
 #define USAGE_HELP \
 	"Type ./mexel <file_name.csv>\n"
 
-typedef struct context {
+typedef struct content {
 	char *buffer;
 	size_t len;
-} context_t;
+} content_t;
 
-context_t *read_context(int argc, char **argv)
+content_t *read_content(int argc, char **argv)
 {
 	if(argc != 2) {
 		fputs(USAGE_HELP, stderr);
@@ -44,7 +44,7 @@ context_t *read_context(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 
-	context_t *result = malloc(sizeof(context_t));
+	content_t *result = malloc(sizeof(content_t));
 
 	result->len = st.st_size;
 	result->buffer = malloc(sizeof(char)*result->len);
@@ -60,11 +60,11 @@ context_t *read_context(int argc, char **argv)
 	return result;
 }
 
-void delete_context(context_t *context)
+void delete_content(content_t *content)
 {
-	free(context->buffer);
+	free(content->buffer);
 
-	free(context);
+	free(content);
 }
 
 int cell_convert(const char *cell)
@@ -72,10 +72,10 @@ int cell_convert(const char *cell)
 	return atoi(cell);
 }
 
-unsigned int find_cell(size_t row, size_t col, context_t *context)
+unsigned int find_cell(size_t row, size_t col, content_t *content)
 {
 	size_t loc_row = row, loc_col = col;
-	char *buffer = context->buffer;
+	char *buffer = content->buffer;
 	while(row-1) {
 		while(*(buffer++) != '\n');
 		--row;
@@ -110,7 +110,7 @@ unsigned int find_cell(size_t row, size_t col, context_t *context)
 	return math;
 }
 
-char *do_math(char *current, context_t *context)
+char *do_math(char *current, content_t *content)
 {
 	//printf("f(");
 	unsigned int result = 0;
@@ -118,7 +118,7 @@ char *do_math(char *current, context_t *context)
 		size_t column = *(current++)-'A'+1;
 		size_t row = *(current++)-'1'+1;
 		//printf("%zu:%zu", column, row);
-		result += find_cell(row, column, context);
+		result += find_cell(row, column, content);
 		if(*current == ',' || *current == '\n')
 			break;
 		//fwrite(current++, 1, 1, stdout);
@@ -129,16 +129,16 @@ char *do_math(char *current, context_t *context)
 	return current;
 }
 
-void parse_context(context_t *context)
+void parse_content(content_t *content)
 {
-	char *current = context->buffer;
+	char *current = content->buffer;
 
 	bool new_cell = true;
 	
 	while(*current) {
 		if(new_cell) {
 			if(*current == '=') {
-				current = do_math(++current, context);
+				current = do_math(++current, content);
 			}
 		}
 
@@ -148,17 +148,17 @@ void parse_context(context_t *context)
 		fwrite(current++, 1, 1, stdout);
 	}
 
-	//fwrite(context->buffer, 1, context->len, stdout);
+	//fwrite(content->buffer, 1, content->len, stdout);
 }
 
 int main(int argc, char **argv)
 {
-	context_t *context = read_context(argc, argv);
+	content_t *content = read_content(argc, argv);
 
-	parse_context(context);
-	//parse_context(context);
+	parse_content(content);
+	//parse_content(content);
 
-	delete_context(context);
+	delete_content(content);
 
 	return 0;
 }
