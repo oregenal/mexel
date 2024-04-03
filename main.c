@@ -15,9 +15,14 @@ void check_arguments(int argc, char **argv)
 	}
 }
 
-char *parse_content(char **argv)
+char *get_content(char **argv)
 {
 	FILE *input = fopen(argv[1], "r");
+	if(input == NULL) {
+		perror("Failed");
+		exit(EXIT_FAILURE);
+	}
+
 	fseek(input, 0L, SEEK_END);
 	long file_size = ftell(input);
 	rewind(input);
@@ -40,9 +45,11 @@ int main(int argc, char **argv)
 {
 	check_arguments(argc, argv);
 
-	char *content = parse_content(argv);
+	char *content = get_content(argv);
 
 	printf("%s\n", content);
+
+	free(content);
 
 	return 0;
 }
