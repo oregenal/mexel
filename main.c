@@ -19,7 +19,7 @@ char *get_content(char **argv)
 {
 	FILE *input = fopen(argv[1], "r");
 	if(input == NULL) {
-		perror("Failed");
+		perror("File open error");
 		exit(EXIT_FAILURE);
 	}
 
