@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 /*
  * TODO:
@@ -43,7 +44,13 @@ char *get_content(char **argv)
 
 void process_data(char *content)
 {
-	printf("%s\n", content);
+	for(size_t i = 0; i < strlen(content); ++i) {
+		if(content[i] == '=') {
+			//TODO: math
+		} else {
+			putchar(content[i]);
+		}
+	}
 }
 
 int main(int argc, char **argv)
