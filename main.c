@@ -41,13 +41,18 @@ char *get_content(char **argv)
 	return buffer;
 }
 
+void process_data(char *content)
+{
+	printf("%s\n", content);
+}
+
 int main(int argc, char **argv)
 {
 	check_arguments(argc, argv);
 
 	char *content = get_content(argv);
 
-	printf("%s\n", content);
+	process_data(content);
 
 	free(content);
 
