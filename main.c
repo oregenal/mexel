@@ -44,12 +44,39 @@ char *get_content(char **argv)
 
 void process_data(char *content)
 {
-	for(size_t i = 0; i < strlen(content); ++i) {
+	int i = 0;
+	while(content[i]) {
 		if(content[i] == '=') {
 			//TODO: math
+			// do a structure wich have row/col for the both cells & math sign
+			while(content[i] != ',') {
+			if(isalpha(content))
+				find_row();
+			} else if(isdigit) {
+				find_column();
+			} else {
+				switch(content) {
+					case '+':
+						do_summ();
+						break;
+					case '-':
+						do_minus();
+						break;
+					case '*':
+						do_mult();
+						break;
+					case '/':
+						do_division();
+						break;
+					default:
+						fprintf(stderr, "Cell parsing error,\
+								must be UNREACHABLE\n");
+				}
+			}
 		} else {
 			putchar(content[i]);
 		}
+		++i;
 	}
 }
 
