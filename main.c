@@ -5,15 +5,14 @@
 
 /*
  * TODO:
- * Use struct for content
  * Parse formulas & do math
  *
  */
 
 typedef struct {
-	int first_cell_row, first_cell_col, second_cell_row, second_cell_col;
-	char math_sign;
-} cells_math_t;
+	char *buffer;
+	size_t index;
+} content_t;
 
 void check_arguments(int argc, char **argv)
 {
@@ -23,7 +22,7 @@ void check_arguments(int argc, char **argv)
 	}
 }
 
-char *get_content(char **argv)
+content_t *get_content(char **argv)
 {
 	FILE *input = fopen(argv[1], "r");
 	if(input == NULL) {
@@ -35,9 +34,11 @@ char *get_content(char **argv)
 	long file_size = ftell(input);
 	rewind(input);
 
-	char *buffer = malloc(file_size * sizeof(char));
+	content_t *content =malloc(sizeof(content_t));
+	content->index = 0;
+	content->buffer = malloc(file_size * sizeof(char));
 
-	size_t readed = fread(buffer, 1, file_size, input);
+	size_t readed = fread(content->buffer, 1, file_size, input);
 
 	if((long)readed != file_size) {
 		fprintf(stderr, "File read error.\n");
@@ -46,7 +47,7 @@ char *get_content(char **argv)
 
 	fclose(input);
 
-	return buffer;
+	return content;
 }
 
 void get_row()
@@ -78,36 +79,30 @@ void get_math_sign(char content)
 	}
 }
 
-void do_math(char *content, int *i)
+void do_math(content_t *content)
 {
-	cells_math_t cells_math;
-	/* TODO: dummy */
-	(void) cells_math;
-
-	while(content[*i] != ',' && content[*i] != '\n') {
-		if(isalpha(content[*i])) {
+	while(content->buffer[content->index] != ',' 
+			&& content->buffer[content->index] != '\n') {
+		if(isalpha(content->buffer[content->index])) {
 			get_row();
-		} else if(isdigit(content[*i])) {
+		} else if(isdigit(content->buffer[content->index])) {
 			get_column();
 		} else {
-			get_math_sign(content[*i]);
+			get_math_sign(content->buffer[content->index]);
 		}
-		++*i;
+		++content->index;
 	}
 }
 
-void process_data(char *content)
+void process_data(content_t *content)
 {
-	int i = 0;
-	while(content[i]) {
-		if(content[i] == '=') {
-			++i;
-			do_math(content, &i);
-			//TODO: math
-			// do a structure wich have row/col for the both cells & math sign
+	while(content->buffer[content->index]) {
+		if(content->buffer[content->index] == '=') {
+			++content->index;
+			do_math(content);
 		} else {
-			putchar(content[i]);
-			++i;
+			putchar(content->buffer[content->index]);
+			++content->index;
 		}
 	}
 }
@@ -116,10 +111,11 @@ int main(int argc, char **argv)
 {
 	check_arguments(argc, argv);
 
-	char *content = get_content(argv);
+	content_t *content = get_content(argv);
 
 	process_data(content);
 
+	free(content->buffer);
 	free(content);
 
 	return 0;
