@@ -1,12 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 /*
  * TODO:
+ * Use struct for content
  * Parse formulas & do math
  *
  */
+
+typedef struct {
+	int first_cell_row, first_cell_col, second_cell_row, second_cell_col;
+	char math_sign;
+} cells_math_t;
 
 void check_arguments(int argc, char **argv)
 {
@@ -42,41 +49,66 @@ char *get_content(char **argv)
 	return buffer;
 }
 
+void get_row()
+{
+}
+
+void get_column() 
+{
+}
+
+void get_math_sign(char content)
+{
+	switch(content) {
+		case '+':
+			//do_summ();
+			break;
+		case '-':
+			//do_minus();
+			break;
+		case '*':
+			//do_mult();
+			break;
+		case '/':
+			//do_division();
+			break;
+		default:
+			fprintf(stderr, "Cell parsing error,\
+					must be UNREACHABLE\n");
+	}
+}
+
+void do_math(char *content, int *i)
+{
+	cells_math_t cells_math;
+	/* TODO: dummy */
+	(void) cells_math;
+
+	while(content[*i] != ',' && content[*i] != '\n') {
+		if(isalpha(content[*i])) {
+			get_row();
+		} else if(isdigit(content[*i])) {
+			get_column();
+		} else {
+			get_math_sign(content[*i]);
+		}
+		++*i;
+	}
+}
+
 void process_data(char *content)
 {
 	int i = 0;
 	while(content[i]) {
 		if(content[i] == '=') {
+			++i;
+			do_math(content, &i);
 			//TODO: math
 			// do a structure wich have row/col for the both cells & math sign
-			while(content[i] != ',') {
-			if(isalpha(content))
-				find_row();
-			} else if(isdigit) {
-				find_column();
-			} else {
-				switch(content) {
-					case '+':
-						do_summ();
-						break;
-					case '-':
-						do_minus();
-						break;
-					case '*':
-						do_mult();
-						break;
-					case '/':
-						do_division();
-						break;
-					default:
-						fprintf(stderr, "Cell parsing error,\
-								must be UNREACHABLE\n");
-				}
-			}
 		} else {
 			putchar(content[i]);
+			++i;
 		}
-		++i;
 	}
 }
 
