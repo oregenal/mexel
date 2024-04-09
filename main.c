@@ -50,12 +50,35 @@ content_t *get_content(char **argv)
 	return content;
 }
 
-void get_row()
+int get_row(content_t *content)
 {
+	int result;
+
+	if(islower(content->buffer[content->index])) {
+		result = content->buffer[content->index] - 'a' + 1;
+	} else if(content->buffer[content->index]) {
+		result = content->buffer[content->index] - 'A' + 1;
+	} else {
+		fprintf(stderr, "Get row error, UNREACHABLE");
+		exit(EXIT_FAILURE);
+	}
+
+	++content->index;
+
+	return result;
 }
 
-void get_column() 
+int get_column(content_t *content) 
 {
+	int result = 0;
+
+	while(isdigit(content->buffer[content->index]))
+	{
+		result += result*10 + (content->buffer[content->index] - '0');
+		++content->index;
+	}
+
+	return result;
 }
 
 void get_math_sign(char content)
@@ -81,16 +104,21 @@ void get_math_sign(char content)
 
 void do_math(content_t *content)
 {
+	int row, col;
+
 	while(content->buffer[content->index] != ',' 
 			&& content->buffer[content->index] != '\n') {
 		if(isalpha(content->buffer[content->index])) {
-			get_row();
+			row = get_row(content);
 		} else if(isdigit(content->buffer[content->index])) {
-			get_column();
+			col = get_column(content);
 		} else {
+			//TODO: debug
+			printf("row = %d; col = %d\n", row, col);
 			get_math_sign(content->buffer[content->index]);
+
+			++content->index;
 		}
-		++content->index;
 	}
 }
 
