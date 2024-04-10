@@ -50,7 +50,7 @@ content_t *get_content(char **argv)
 	return content;
 }
 
-int get_row(content_t *content)
+int get_col(content_t *content)
 {
 	int result;
 
@@ -68,7 +68,7 @@ int get_row(content_t *content)
 	return result;
 }
 
-int get_column(content_t *content) 
+int get_row(content_t *content) 
 {
 	int result = 0;
 
@@ -102,24 +102,61 @@ void get_math_sign(char content)
 	}
 }
 
-void do_math(content_t *content)
+int get_cell(int row, int col, content_t *content)
 {
-	int row, col;
+	(void) row;
+	(void) col;
+	(void) content;
+	return 43;
+}
+
+int do_math(int first_cell, int second_cell, char math_sign)
+{
+	if(math_sign != '\0') {
+		switch(math_sign) {
+			case '+':
+				second_cell += first_cell;
+				break;
+			case '-':
+				second_cell = first_cell - second_cell;
+				break;
+			case '*':
+				second_cell *= first_cell;
+				break;
+			case '/':
+				second_cell = first_cell / second_cell;
+				break;
+			default:
+				fprintf(stderr, "Math sign error, must be UNREACHABLE.\n");
+		}
+	}
+
+	return second_cell;
+}
+
+void parse_cell(content_t *content)
+{
+	int row, col, first_cell, second_cell;
+	char math_sign = '\0';
 
 	while(content->buffer[content->index] != ',' 
 			&& content->buffer[content->index] != '\n') {
 		if(isalpha(content->buffer[content->index])) {
-			row = get_row(content);
+			col = get_col(content);
 		} else if(isdigit(content->buffer[content->index])) {
-			col = get_column(content);
+			row = get_row(content);
 		} else {
-			//TODO: debug
-			printf("row = %d; col = %d\n", row, col);
-			get_math_sign(content->buffer[content->index]);
+			math_sign = content->buffer[content->index];
+			first_cell = get_cell(row, col, content);
 
 			++content->index;
 		}
 	}
+
+	second_cell = get_cell(row, col, content);
+	second_cell = do_math(first_cell, second_cell, math_sign);
+
+	printf("%d", second_cell);
 }
 
 void process_data(content_t *content)
@@ -127,7 +164,7 @@ void process_data(content_t *content)
 	while(content->buffer[content->index]) {
 		if(content->buffer[content->index] == '=') {
 			++content->index;
-			do_math(content);
+			parse_cell(content);
 		} else {
 			putchar(content->buffer[content->index]);
 			++content->index;
