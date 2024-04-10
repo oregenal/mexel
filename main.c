@@ -76,9 +76,9 @@ int get_integer(content_t *content, size_t *index)
 	return result;
 }
 
-int get_row(content_t *content, size_t *index)
+int get_row(content_t *content)
 {
-	return get_integer(content, index);
+	return get_integer(content, &content->index);
 }
 
 void get_math_sign(char content)
@@ -166,7 +166,7 @@ void parse_cell(content_t *content)
 		if(isalpha(content->buffer[content->index])) {
 			col = get_col(content);
 		} else if(isdigit(content->buffer[content->index])) {
-			row = get_row(content, &content->index);
+			row = get_row(content);
 		} else {
 			math_sign = content->buffer[content->index];
 			first_cell = get_cell_data(row, col, content);
