@@ -6,6 +6,7 @@
 typedef struct {
 	char *buffer;
 	size_t index;
+	size_t search_index;
 } content_t;
 
 void check_arguments(int argc, char **argv)
@@ -62,17 +63,22 @@ int get_col(content_t *content)
 	return result;
 }
 
-int get_row(content_t *content) 
+int get_integer(content_t *content, size_t *index) 
 {
 	int result = 0;
 
-	while(isdigit(content->buffer[content->index]))
+	while(isdigit(content->buffer[*index]))
 	{
-		result += result*10 + (content->buffer[content->index] - '0');
-		++content->index;
+		result = result*10 + ((content->buffer[*index] - '0'));
+		++*index;
 	}
 
 	return result;
+}
+
+int get_row(content_t *content, size_t *index)
+{
+	return get_integer(content, index);
 }
 
 void get_math_sign(char content)
@@ -96,12 +102,34 @@ void get_math_sign(char content)
 	}
 }
 
-int get_cell(int row, int col, content_t *content)
+void find_row(int row, content_t *content)
 {
-	(void) row;
-	(void) col;
-	(void) content;
-	return 43;
+	while(row - 1) {
+		while(content->buffer[content->search_index] != '\n') {
+			++content->search_index;
+		}
+		++content->search_index;
+		--row;
+	}
+}
+
+void find_col(int col, content_t *content)
+{
+	while(col - 1) {
+		while(content->buffer[content->search_index] != ',') {
+			++content->search_index;
+		}
+		++content->search_index;
+		--col;
+	}
+}
+
+int get_cell_data(int row, int col, content_t *content)
+{
+	content->search_index = 0;
+	find_row(row, content);
+	find_col(col, content);
+	return get_integer(content, &content->search_index);
 }
 
 int do_math(int first_cell, int second_cell, char math_sign)
@@ -138,16 +166,16 @@ void parse_cell(content_t *content)
 		if(isalpha(content->buffer[content->index])) {
 			col = get_col(content);
 		} else if(isdigit(content->buffer[content->index])) {
-			row = get_row(content);
+			row = get_row(content, &content->index);
 		} else {
 			math_sign = content->buffer[content->index];
-			first_cell = get_cell(row, col, content);
+			first_cell = get_cell_data(row, col, content);
 
 			++content->index;
 		}
 	}
 
-	second_cell = get_cell(row, col, content);
+	second_cell = get_cell_data(row, col, content);
 	second_cell = do_math(first_cell, second_cell, math_sign);
 
 	printf("%d", second_cell);
