@@ -3,12 +3,6 @@
 #include <string.h>
 #include <ctype.h>
 
-/*
- * TODO:
- * Parse formulas & do math
- *
- */
-
 typedef struct {
 	char *buffer;
 	size_t index;
