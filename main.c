@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdbool.h>
 
 typedef struct {
 	char *buffer;
@@ -66,6 +67,12 @@ int get_col(content_t *content)
 int get_integer(content_t *content, size_t *index) 
 {
 	int result = 0;
+	bool negative = false;
+
+	if(content->buffer[*index] == '-') {
+		negative = true;
+		++*index;
+	}
 
 	while(isdigit(content->buffer[*index]))
 	{
@@ -73,7 +80,7 @@ int get_integer(content_t *content, size_t *index)
 		++*index;
 	}
 
-	return result;
+	return negative ? -result : result;
 }
 
 int get_row(content_t *content)
@@ -160,16 +167,20 @@ void parse_cell(content_t *content)
 {
 	int row, col, first_cell, second_cell;
 	char math_sign = '\0';
+	bool is_second = false;
 
 	while(content->buffer[content->index] != ',' 
 			&& content->buffer[content->index] != '\n') {
 		if(isalpha(content->buffer[content->index])) {
 			col = get_col(content);
-		} else if(isdigit(content->buffer[content->index])) {
+		} else if(isdigit(content->buffer[content->index])
+				|| (content->buffer[content->index] == '-'
+				&& is_second)) {
 			row = get_row(content);
 		} else {
 			math_sign = content->buffer[content->index];
 			first_cell = get_cell_data(row, col, content);
+			is_second = true;
 
 			++content->index;
 		}
