@@ -142,7 +142,7 @@ int do_math(int first_cell, int second_cell, char math_sign)
 	return second_cell;
 }
 
-void parse_cell(content_t *content)
+int parse_cell(content_t *content)
 {
 	int row, col, first_cell, second_cell;
 	char math_sign = '\0';
@@ -168,7 +168,7 @@ void parse_cell(content_t *content)
 	second_cell = get_cell_data(row, col, content);
 	second_cell = do_math(first_cell, second_cell, math_sign);
 
-	printf("%d", second_cell);
+	return second_cell;
 }
 
 void process_data(content_t *content)
@@ -176,7 +176,8 @@ void process_data(content_t *content)
 	while(content->buffer[content->index]) {
 		if(content->buffer[content->index] == '=') {
 			++content->index;
-			parse_cell(content);
+			int result = parse_cell(content);
+			printf("%d", result);
 		} else {
 			putchar(content->buffer[content->index]);
 			++content->index;
