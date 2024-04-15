@@ -55,7 +55,7 @@ int get_col(content_t *content)
 	} else if(content->buffer[content->index]) {
 		result = content->buffer[content->index] - 'A' + 1;
 	} else {
-		fprintf(stderr, "Get col error, UNREACHABLE");
+		fputs("Get col error, UNREACHABLE\n", stderr);
 		exit(EXIT_FAILURE);
 	}
 
@@ -64,10 +64,18 @@ int get_col(content_t *content)
 	return result;
 }
 
+int parse_cell(content_t *, size_t *);
+
 int get_integer(content_t *content, size_t *index) 
 {
 	int result = 0;
 	bool negative = false;
+
+	if(content->buffer[*index] == '=') {
+		puts("Find nested formula.\n");
+		++*index;
+		return parse_cell(content, index);
+	}
 
 	if(!isdigit(content->buffer[*index])
 			&& content->buffer[*index] != '-') {
@@ -148,26 +156,26 @@ int do_math(int first_cell, int second_cell, char math_sign)
 	return second_cell;
 }
 
-int parse_cell(content_t *content)
+int parse_cell(content_t *content, size_t *index)
 {
 	int row, col, first_cell, second_cell;
 	char math_sign = '\0';
 	bool is_second = false;
 
-	while(content->buffer[content->index] != ',' 
-			&& content->buffer[content->index] != '\n') {
-		if(isalpha(content->buffer[content->index])) {
+	while(content->buffer[*index] != ',' 
+			&& content->buffer[*index] != '\n') {
+		if(isalpha(content->buffer[*index])) {
 			col = get_col(content);
-		} else if(isdigit(content->buffer[content->index])
-				|| (content->buffer[content->index] == '-'
+		} else if(isdigit(content->buffer[*index])
+				|| (content->buffer[*index] == '-'
 				&& is_second)) {
 			row = get_row(content);
 		} else {
-			math_sign = content->buffer[content->index];
+			math_sign = content->buffer[*index];
 			first_cell = get_cell_data(row, col, content);
 			is_second = true;
 
-			++content->index;
+			++*index;
 		}
 	}
 
@@ -182,7 +190,7 @@ void process_data(content_t *content)
 	while(content->buffer[content->index]) {
 		if(content->buffer[content->index] == '=') {
 			++content->index;
-			int result = parse_cell(content);
+			int result = parse_cell(content, &content->index);
 			printf("%d", result);
 		} else {
 			putchar(content->buffer[content->index]);
