@@ -69,6 +69,12 @@ int get_integer(content_t *content, size_t *index)
 	int result = 0;
 	bool negative = false;
 
+	if(!isdigit(content->buffer[*index])
+			&& content->buffer[*index] != '-') {
+		fputs("Error in formula, cell data is not integer.\n", stderr);
+		exit(EXIT_FAILURE);
+	}
+
 	if(content->buffer[*index] == '-') {
 		negative = true;
 		++*index;
