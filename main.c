@@ -55,7 +55,7 @@ int get_col(content_t *content)
 	} else if(content->buffer[content->index]) {
 		result = content->buffer[content->index] - 'A' + 1;
 	} else {
-		fprintf(stderr, "Get row error, UNREACHABLE");
+		fprintf(stderr, "Get col error, UNREACHABLE");
 		exit(EXIT_FAILURE);
 	}
 
