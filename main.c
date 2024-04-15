@@ -88,27 +88,6 @@ int get_row(content_t *content)
 	return get_integer(content, &content->index);
 }
 
-void get_math_sign(char content)
-{
-	switch(content) {
-		case '+':
-			//do_summ();
-			break;
-		case '-':
-			//do_minus();
-			break;
-		case '*':
-			//do_mult();
-			break;
-		case '/':
-			//do_division();
-			break;
-		default:
-			fprintf(stderr, "Cell parsing error,\
-					must be UNREACHABLE\n");
-	}
-}
-
 void find_row(int row, content_t *content)
 {
 	while(row - 1) {
