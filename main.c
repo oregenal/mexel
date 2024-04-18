@@ -64,7 +64,7 @@ int get_col(content_t *content)
 	return result;
 }
 
-int parse_cell(content_t *, size_t *);
+int parse_furmula(content_t *, size_t *);
 
 int get_integer(content_t *content, size_t *index) 
 {
@@ -74,7 +74,7 @@ int get_integer(content_t *content, size_t *index)
 	if(content->buffer[*index] == '=') {
 		puts("Find nested formula.\n");
 		++*index;
-		return parse_cell(content, index);
+		return parse_furmula(content, index);
 	}
 
 	if(!isdigit(content->buffer[*index])
@@ -156,7 +156,7 @@ int do_math(int first_cell, int second_cell, char math_sign)
 	return second_cell;
 }
 
-int parse_cell(content_t *content, size_t *index)
+int parse_furmula(content_t *content, size_t *index)
 {
 	int row, col, first_cell, second_cell;
 	char math_sign = '\0';
@@ -190,7 +190,7 @@ void process_data(content_t *content)
 	while(content->buffer[content->index]) {
 		if(content->buffer[content->index] == '=') {
 			++content->index;
-			int result = parse_cell(content, &content->index);
+			int result = parse_furmula(content, &content->index);
 			printf("%d", result);
 		} else {
 			putchar(content->buffer[content->index]);
