@@ -46,20 +46,20 @@ content_t *get_content(char **argv)
 	return content;
 }
 
-int get_col(content_t *content)
+int get_col(content_t *content, size_t *index)
 {
 	int result;
 
-	if(islower(content->buffer[content->index])) {
-		result = content->buffer[content->index] - 'a' + 1;
-	} else if(content->buffer[content->index]) {
-		result = content->buffer[content->index] - 'A' + 1;
+	if(islower(content->buffer[*index])) {
+		result = content->buffer[*index] - 'a' + 1;
+	} else if(content->buffer[*index]) {
+		result = content->buffer[*index] - 'A' + 1;
 	} else {
 		fputs("Get col error, UNREACHABLE\n", stderr);
 		exit(EXIT_FAILURE);
 	}
 
-	++content->index;
+	++*index;
 
 	return result;
 }
@@ -72,7 +72,6 @@ int get_integer(content_t *content, size_t *index)
 	bool negative = false;
 
 	if(content->buffer[*index] == '=') {
-		puts("Find nested formula.\n");
 		++*index;
 		return parse_furmula(content, index);
 	}
@@ -97,39 +96,39 @@ int get_integer(content_t *content, size_t *index)
 	return negative ? -result : result;
 }
 
-int get_row(content_t *content)
+int get_row(content_t *content, size_t *index)
 {
-	return get_integer(content, &content->index);
+	return get_integer(content, index);
 }
 
-void find_row(int row, content_t *content)
+void find_row(int row, content_t *content, size_t *search_index)
 {
 	while(row - 1) {
-		while(content->buffer[content->search_index] != '\n') {
-			++content->search_index;
+		while(content->buffer[*search_index] != '\n') {
+			++*search_index;
 		}
-		++content->search_index;
+		++*search_index;
 		--row;
 	}
 }
 
-void find_col(int col, content_t *content)
+void find_col(int col, content_t *content, size_t *search_index)
 {
 	while(col - 1) {
-		while(content->buffer[content->search_index] != ',') {
-			++content->search_index;
+		while(content->buffer[*search_index] != ',') {
+			++*search_index;
 		}
-		++content->search_index;
+		++*search_index;
 		--col;
 	}
 }
 
 int get_cell_data(int row, int col, content_t *content)
 {
-	content->search_index = 0;
-	find_row(row, content);
-	find_col(col, content);
-	return get_integer(content, &content->search_index);
+	size_t search_index = 0;
+	find_row(row, content, &search_index);
+	find_col(col, content, &search_index);
+	return get_integer(content, &search_index);
 }
 
 int do_math(int first_cell, int second_cell, char math_sign)
@@ -158,6 +157,8 @@ int do_math(int first_cell, int second_cell, char math_sign)
 
 int parse_furmula(content_t *content, size_t *index)
 {
+	// =A1+B3,...etc
+	//  ^
 	int row, col, first_cell, second_cell;
 	char math_sign = '\0';
 	bool is_second = false;
@@ -165,11 +166,11 @@ int parse_furmula(content_t *content, size_t *index)
 	while(content->buffer[*index] != ',' 
 			&& content->buffer[*index] != '\n') {
 		if(isalpha(content->buffer[*index])) {
-			col = get_col(content);
+			col = get_col(content, index);
 		} else if(isdigit(content->buffer[*index])
 				|| (content->buffer[*index] == '-'
 				&& is_second)) {
-			row = get_row(content);
+			row = get_row(content, index);
 		} else {
 			math_sign = content->buffer[*index];
 			first_cell = get_cell_data(row, col, content);
