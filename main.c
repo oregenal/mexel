@@ -7,7 +7,6 @@
 typedef struct {
 	char *buffer;
 	size_t index;
-	size_t search_index;
 } content_t;
 
 void check_arguments(int argc, char **argv)
@@ -157,8 +156,6 @@ int do_math(int first_cell, int second_cell, char math_sign)
 
 int parse_furmula(content_t *content, size_t *index)
 {
-	// =A1+B3,...etc
-	//  ^
 	int row, col, first_cell, second_cell;
 	char math_sign = '\0';
 	bool is_second = false;
