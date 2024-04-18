@@ -175,7 +175,6 @@ int parse_furmula(content_t *content, size_t *index)
 		} 
 	}
 
-
 	return result;
 }
 
