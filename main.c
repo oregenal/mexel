@@ -156,31 +156,26 @@ int do_math(int first_cell, int second_cell, char math_sign)
 
 int parse_furmula(content_t *content, size_t *index)
 {
-	int row, col, first_cell, second_cell;
+	int row, col, temp, result = 0;
 	char math_sign = '\0';
-	bool is_second = false;
 
+	//=A1+B3+D6
+	//   ^
 	while(content->buffer[*index] != ',' 
 			&& content->buffer[*index] != '\n') {
 		if(isalpha(content->buffer[*index])) {
 			col = get_col(content, index);
-		} else if(isdigit(content->buffer[*index])
-				|| (content->buffer[*index] == '-'
-				&& is_second)) {
+		} else if(isdigit(content->buffer[*index])) {
 			row = get_row(content, index);
-		} else {
+			temp = get_cell_data(row, col, content);
+			result = do_math(result, temp, math_sign);
+		} else { 
 			math_sign = content->buffer[*index];
-			first_cell = get_cell_data(row, col, content);
-			is_second = true;
-
 			++*index;
-		}
+		} 
 	}
 
-	second_cell = get_cell_data(row, col, content);
-	second_cell = do_math(first_cell, second_cell, math_sign);
-
-	return second_cell;
+	return result;
 }
 
 void process_data(content_t *content)
