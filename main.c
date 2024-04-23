@@ -4,6 +4,8 @@
 #include <ctype.h>
 #include <stdbool.h>
 
+// TEST
+
 typedef struct {
 	char *buffer;
 	size_t index;
