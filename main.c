@@ -31,7 +31,8 @@ content_t *get_content(char **argv)
 
 	content_t *content =malloc(sizeof(content_t));
 	content->index = 0;
-	content->buffer = malloc(file_size * sizeof(char));
+	content->buffer = malloc(file_size * sizeof(char) + 1);
+	memset(content->buffer, 0, file_size + 1);
 
 	size_t readed = fread(content->buffer, 1, file_size, input);
 
