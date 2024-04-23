@@ -160,8 +160,6 @@ int parse_furmula(content_t *content, size_t *index)
 	int row, col, temp, result = 0;
 	char math_sign = '\0';
 
-	//=A1+B3+D6
-	//   ^
 	while(content->buffer[*index] != ',' 
 			&& content->buffer[*index] != '\n') {
 		if(isalpha(content->buffer[*index])) {
