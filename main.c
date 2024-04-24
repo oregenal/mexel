@@ -64,7 +64,7 @@ int get_col(content_t *content, size_t *index)
 	return result;
 }
 
-int parse_furmula(content_t *, size_t *);
+int parse_formula(content_t *, size_t *);
 
 int get_integer(content_t *content, size_t *index) 
 {
@@ -73,7 +73,7 @@ int get_integer(content_t *content, size_t *index)
 
 	if(content->buffer[*index] == '=') {
 		++*index;
-		return parse_furmula(content, index);
+		return parse_formula(content, index);
 	}
 
 	if(!isdigit(content->buffer[*index])
@@ -155,7 +155,7 @@ int do_math(int first_cell, int second_cell, char math_sign)
 	return second_cell;
 }
 
-int parse_furmula(content_t *content, size_t *index)
+int parse_formula(content_t *content, size_t *index)
 {
 	int row, col, temp, result = 0;
 	char math_sign = '\0';
@@ -182,7 +182,7 @@ void process_data(content_t *content)
 	while(content->buffer[content->index]) {
 		if(content->buffer[content->index] == '=') {
 			++content->index;
-			int result = parse_furmula(content, &content->index);
+			int result = parse_formula(content, &content->index);
 			printf("%d", result);
 		} else {
 			putchar(content->buffer[content->index]);
