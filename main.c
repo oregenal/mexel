@@ -160,7 +160,7 @@ int do_math(int first_cell, int second_cell, char math_sign)
 int parse_formula(content_t *content, size_t *index)
 {
 	int row, col;
-	char sig_stack[STACK_SIZE];
+	char sig_stack[STACK_SIZE] = { '\0' };
 	size_t sig_indnex = 0;
 	int int_stack[STACK_SIZE];
 	size_t int_indnex = 0;
