@@ -205,7 +205,8 @@ int parse_formula(content_t *content, size_t *index)
 		}
 	}
 	
-	int_stack[0] = do_math(int_stack[0], int_stack[1], sig_stack[0]);
+	if(sig_indnex > 0)
+		int_stack[0] = do_math(int_stack[0], int_stack[1], sig_stack[0]);
 
 	return int_stack[0];
 }
