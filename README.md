@@ -2,5 +2,6 @@
 Interview exercise.
 
 ## Idea.
-- Console batch programm, that aceept the file, and spit the result in standart output.
-- Format of the accepted file - CSV.
+- Console batch program, that accept the <csv> file, 
+and spit the result in standard output.
+- It's accept mathematical formulas, even nested ones.
