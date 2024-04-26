@@ -4,6 +4,8 @@
 #include <ctype.h>
 #include <stdbool.h>
 
+#define STACK_SIZE 4
+
 typedef struct {
 	char *buffer;
 	size_t index;
@@ -157,8 +159,11 @@ int do_math(int first_cell, int second_cell, char math_sign)
 
 int parse_formula(content_t *content, size_t *index)
 {
-	int row, col, temp, result = 0;
-	char math_sign = '\0';
+	int row, col;
+	char sig_stack[STACK_SIZE];
+	size_t sig_indnex = 0;
+	int int_stack[STACK_SIZE];
+	size_t int_indnex = 0;
 
 	while(content->buffer[*index] != ',' 
 			&& content->buffer[*index] != '\n') {
@@ -166,15 +171,43 @@ int parse_formula(content_t *content, size_t *index)
 			col = get_col(content, index);
 		} else if(isdigit(content->buffer[*index])) {
 			row = get_row(content, index);
-			temp = get_cell_data(row, col, content);
-			result = do_math(result, temp, math_sign);
+			int_stack[int_indnex] = get_cell_data(row, col, content);
+			++int_indnex;
+			if(int_indnex == STACK_SIZE) {
+				fputs("Index stack overflow", stderr);
+				exit(EXIT_FAILURE);
+			}
 		} else { 
-			math_sign = content->buffer[*index];
+			sig_stack[sig_indnex] = content->buffer[*index];
+			++sig_indnex;
 			++*index;
+			if(sig_indnex == STACK_SIZE) {
+				fputs("Sign stack overflow", stderr);
+				exit(EXIT_FAILURE);
+			}
 		} 
-	}
 
-	return result;
+		if(int_indnex == 3) {
+			if(sig_stack[sig_indnex-1] == '*' || sig_stack[sig_indnex-1] == '/') {
+				int_stack[1] = do_math(int_stack[1], int_stack[2], sig_stack[1]);
+				if(sig_indnex == 3)
+					sig_stack[1] = sig_stack[2];
+				--int_indnex;
+				--sig_indnex;
+			} else {
+				int_stack[0] = do_math(int_stack[0], int_stack[1], sig_stack[0]);
+				int_stack[1] = int_stack[2];
+				sig_stack[0] = sig_stack[1];
+				sig_stack[1] = sig_stack[2];
+				--sig_indnex;
+				--int_indnex;
+			}
+		}
+	}
+	
+	int_stack[0] = do_math(int_stack[0], int_stack[1], sig_stack[0]);
+
+	return int_stack[0];
 }
 
 void process_data(content_t *content)
