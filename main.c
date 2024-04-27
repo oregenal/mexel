@@ -183,6 +183,16 @@ int parse_formula(content_t *content, size_t *index)
 		} else if(isdigit(content->buffer[*index])) {
 			int_stack[int_indnex] = get_integer(content, index);
 			++int_indnex;
+		} else if(content->buffer[*index] == '(') {
+			++*index;
+			int_stack[int_indnex] = parse_formula(content, index);
+			++int_indnex;
+		} else if(content->buffer[*index] == ')') {
+			++*index;
+			if(sig_indnex > 0)
+				int_stack[0] = do_math(int_stack[0], int_stack[1], sig_stack[0]);
+
+			return int_stack[0];
 		} else { 
 			sig_stack[sig_indnex] = content->buffer[*index];
 			++sig_indnex;
