@@ -164,19 +164,25 @@ int parse_formula(content_t *content, size_t *index)
 	size_t sig_indnex = 0;
 	int int_stack[STACK_SIZE];
 	size_t int_indnex = 0;
+	bool is_cell = false;
 
 	while(content->buffer[*index] != ',' 
 			&& content->buffer[*index] != '\n') {
 		if(isalpha(content->buffer[*index])) {
 			col = get_col(content, index);
-		} else if(isdigit(content->buffer[*index])) {
+			is_cell = true;
+		} else if(isdigit(content->buffer[*index]) && is_cell == true) {
 			row = get_row(content, index);
 			int_stack[int_indnex] = get_cell_data(row, col, content);
 			++int_indnex;
+			is_cell = false;
 			if(int_indnex == STACK_SIZE) {
 				fputs("Index stack overflow", stderr);
 				exit(EXIT_FAILURE);
 			}
+		} else if(isdigit(content->buffer[*index])) {
+			int_stack[int_indnex] = get_integer(content, index);
+			++int_indnex;
 		} else { 
 			sig_stack[sig_indnex] = content->buffer[*index];
 			++sig_indnex;
