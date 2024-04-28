@@ -103,11 +103,21 @@ int get_row(content_t *content, size_t *index)
 	return get_integer(content, index);
 }
 
+void if_end(const char symbol)
+{
+	if(symbol == 0) {
+		fflush(stdout);
+		fputs("\nError: invalid cell adress.\n", stderr);
+		exit(EXIT_FAILURE);
+	}
+}
+
 void find_row(int row, content_t *content, size_t *search_index)
 {
 	while(row - 1) {
 		while(content->buffer[*search_index] != '\n') {
 			++*search_index;
+			if_end(content->buffer[*search_index]);
 		}
 		++*search_index;
 		--row;
@@ -119,6 +129,7 @@ void find_col(int col, content_t *content, size_t *search_index)
 	while(col - 1) {
 		while(content->buffer[*search_index] != ',') {
 			++*search_index;
+			if_end(content->buffer[*search_index]);
 		}
 		++*search_index;
 		--col;
