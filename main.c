@@ -238,13 +238,20 @@ int parse_formula(content_t *content, size_t *index)
 
 void process_data(content_t *content)
 {
+	bool new_cell = true;
 	while(content->buffer[content->index]) {
-		if(content->buffer[content->index] == '=') {
+		if(content->buffer[content->index] == '='
+				&& new_cell == true) {
 			++content->index;
 			int result = parse_formula(content, &content->index);
 			printf("%d", result);
 		} else {
 			putchar(content->buffer[content->index]);
+			if(content->buffer[content->index] == ','
+					|| content->buffer[content->index] == '\n')
+				new_cell = true;
+			else
+				new_cell = false;
 			++content->index;
 		}
 	}
